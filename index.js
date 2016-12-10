@@ -19,9 +19,9 @@
             refreshIfStream();
           } else {
             _trackList["_" + key] = newValue;
-            _trackList.internalRemoveFilteredOut();
           }
         }
+        if(i == keys.length - 1 ) {_trackList.internalRemoveFilteredOut();}
       }
     });
 
@@ -34,7 +34,7 @@
         var _element = element;
         var _tracks = [];
         var _that = this;
-        var _trackPagingListener, that = this;
+        var _trackPagingListener, that = this, _searching = false, _lastPlayed;
         this._repostRemover = false;
         this._playlistRemover = false;
 
@@ -59,7 +59,21 @@
 
             _player.onTrackChanged(function (tracklink) {
                 if(!canPlay(tracklink)) {
-                    _player.next();
+                    if(_searching) { window.scrollTo(0,document.body.scrollHeight);}
+                    var notFilteredOut = getNotFiltered();
+                    var trackIndex = notFilteredOut.findIndex(function(track) {return track.getLink().indexOf(_lastPlayed) > -1});
+                    var nextTrack = notFilteredOut[trackIndex + 1];
+                    if(trackIndex > -1 && nextTrack) {
+                      _searching = false;
+                      _lastPlayed = nextTrack.getLink();
+                      nextTrack.play();
+                    } else {
+                      _player.next();
+                      _searching = true;
+                    }
+                } else {
+                  _searching = false;
+                  _lastPlayed = tracklink;
                 }
             });
           }
@@ -76,17 +90,19 @@
         var canPlay = function (tracklink) {
           var track = _tracks.find(function (track) {
               // return post.getLink() === tracklink || endsWith(tracklink, 'in=' + post.getLink().substring(1));
-              return track.getLink() === trackLink;
+              return track.getLink() === tracklink;
           });
           return track && !track.isRemoved();
         };
 
         this.internalRemoveFilteredOut = function () {
+          if(requiresFiltering()) {
             _tracks.forEach(function(track) {
-              if(track.shouldFilter(that._repostRemover, that._playlistRemover)) {
+              if(track.shouldRemove(that._repostRemover, that._playlistRemover)) {
                 track.remove();
               }
             });
+          }
         };
 
         var getNotFiltered = function () {
@@ -110,15 +126,20 @@
 
             _trackPagingListener.onNextTracksLoaded(function () {
                 var nextTracks = $('li.soundList__item', _element).slice(_tracks.length - getFilteredOut().length);
+                if(nextTracks.length > 0) { _searching = false;}
                 nextTracks.each(function (index) {
-                    _tracks.push(new TrackItem( $(this) ) );
+                  var newTrackItem = new TrackItem( $(this) );
+                  if(!newTrackItem.shouldRemove(that._repostRemover, that._playlistRemover)) {
+                    if(_searching) {_searching = false; _lastPlayed=newTrackItem.getLink(); newTrackItem.play();}
+                    _tracks.push(newTrackItem);
+                  } else {newTrackItem.remove();}
                 });
-                that.internalRemoveFilteredOut();
+                // that.internalRemoveFilteredOut();
             });
         };
         chrome.storage.sync.get(valuesArray, function(storage) {
           var keys = Object.keys(storage);
-          console.log(storage);
+          // console.log(storage);
           for(var i=0;i<keys.length;i++) {
             var key = keys[i];
             var value = storage[key];
@@ -199,6 +220,7 @@
                         _lastTrack = _currentTrack;
                         _currentTrack = actualTrack;
                         if (_onTrackChangedCallback) {
+                          // console.log(_currentTrack);
                             _onTrackChangedCallback(_currentTrack);
                         }
                     }
@@ -211,7 +233,7 @@
     var TrackItem = function (element) {
 
         var _element = element;
-        var _restoreElementCopy, _repost, _removed, _link, _playlist, _likes, _reposts;
+        var _restoreElementCopy, _repost, _removed, _link, _likes, _reposts, that = this;
 
         this.remove = function () {
             if(!_removed) {
@@ -220,23 +242,28 @@
             }
         };
 
-        this.shouldFilter = function(repostRemover, playlistRemover) {
-          var removeAsRepost = repostRemover && _repost;
-          var removeAsPlaylist = playlistRemover && _playlist;
-          return !_removed && (removeAsPlaylist || removeAsRepost);
+        this.shouldRemove = function(repostRemover, playlistRemover) {
+          var removeAsRepost = repostRemover && this.isRepost();
+          var removeAsPlaylist = playlistRemover && this.isPlaylist();
+          return !this.isRemoved() && (removeAsPlaylist || removeAsRepost);
         };
 
         this.isRepost = function() { return _repost; };
         this.getLink = function() { return _link; };
-        this.isPlaylist = function() { return _playlist; };
+        this.isPlaylist = function() { return this.getLink().indexOf('/sets/') > -1; };
         this.isRemoved = function() { return _removed; };
+        this.getElement = function() { return _element; };
+        this.getLikes = function() {return _likes; };
+        this.getReposts = function() {return _reposts; };
+        this.play = function() {
+          that.getElement().find('.sc-button-play').click();
+        };
 
         (function init() {
             _repost = $('.soundContext .sc-ministats-reposts', _element).length > 0;
             _link = $('a.soundTitle__title', _element).attr('href');
-            _playlist = $('div.group').hasClass('playlist');
-            _likes = $('button.sc-button-like').text();
-            _reposts = $('button.sc-button-respost').text();
+            _likes = $('button.sc-button-like', _element).text();
+            _reposts = $('button.sc-button-repost', _element).text();
         })();
 
     };
