@@ -9,7 +9,7 @@
    "name": "Soundcloud Stream Filter",
    "permissions": [ "activeTab", "https://soundcloud.com/*", "storage" ],
    "short_name": "sc-filter",
-   "version": "1.0",
+   "version": "0.0.0.1",
    "browser_action": {
       "default_popup": "popup.html",
       "default_title": "Soundcloud Filter Settings",
