@@ -1,7 +1,7 @@
 console.log('popup.js loaded');
 
 // initialize state by pulling from memory
-var valuesArray = ['repostRemover', 'likesMin', 'likesMax', 'playsMin', 'playsMax', 'playlistRemover', 'keywordsActive', 'keywordsArray'];
+var valuesArray = ['repostRemover', 'likesMin', 'likesMax', 'playsMin', 'playsMax', 'repostsMin', 'repostsMax', 'playlistRemover', 'keywordsActive', 'keywordsArray', 'likesToPlays'];
 
 $(document).ready(function() {
   function camelCaseToDash( myStr ) {
@@ -24,7 +24,7 @@ $(document).ready(function() {
     }
 
     // inputs
-    if( (key.indexOf('Max') > -1 || key.indexOf('Min') > -1) && value) {
+    if( (key.indexOf('Max') > -1 || key.indexOf('Min') > -1 || key.indexOf('likes') > -1) && value) {
       var inputSelector = "#sc-filter-" + camelCaseToDash(key);
       $(inputSelector).val(value);
     }
@@ -48,7 +48,8 @@ $(document).ready(function() {
       if(key.indexOf('Remover') > -1 || key.indexOf('Active') > -1) {
         var value = $(inputSelector).hasClass('active');
         newValues[key] = value;
-      } else if(key.indexOf('Max') > -1 || key.indexOf('Min') > -1){
+      } else if(key.indexOf('Max') > -1 || key.indexOf('Min') > -1 || key.indexOf('likes') > -1){
+        debugger;
         var value = $(inputSelector).val();
         newValues[key] = value;
       }
@@ -59,5 +60,14 @@ $(document).ready(function() {
         });
       }
     }
-  })
+  });
+
+  $('#sc-filter-clear-settings').click(function() {
+    for(var i=0; i < valuesArray.length; i++) {
+      var key = valuesArray[i];
+      var inputSelector = "#sc-filter-" + camelCaseToDash(key);
+      $(inputSelector).removeClass('active');
+      $(inputSelector).val('');
+    }
+  });
 });

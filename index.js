@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    // var valuesArray = ['repostRemover', 'likesMin', 'likesMax', 'playsMin', 'playsMax', 'playlistRemover', 'keywordsActive', 'keywordsArray'];
-    var valuesArray = ['repostRemover', 'playlistRemover'];
+    // var valuesArray = ['repostRemover', 'likesin', 'likesMax', 'playsMin', 'playsMax', 'playlistRemover', 'keywordsActive', 'keywordsArray'];
+    var valuesArray = ['repostRemover', 'playlistRemover', 'likesMin', 'likesMax', 'playsMin', 'playsMax', 'repostsMin', 'repostsMax', 'likesToPlays'];
 
 
     var _trackList, _player;
@@ -20,6 +20,8 @@
           } else {
             _trackList["_" + key] = newValue;
           }
+        } else if (key.indexOf('Min') > -1 || key.indexOf('Max') > -1 || key.indexOf('likes') > -1) {
+          refreshIfStream();
         }
         if(i == keys.length - 1 ) {_trackList.internalRemoveFilteredOut();}
       }
@@ -35,9 +37,14 @@
         var _tracks = [];
         var _that = this;
         var _trackPagingListener, that = this, _searching = false, _lastPlayed;
-        this._repostRemover = false;
-        this._playlistRemover = false;
 
+        var filterParams = function() {
+          var params = {};
+          valuesArray.forEach(key => {
+            params[key] = _that[`_${key}`];
+          });
+          return params;
+        }
 
         // var repostRemover = function () {
         //     // _toggleRepostsButton.addClass('sc-button-selected');
@@ -98,7 +105,7 @@
         this.internalRemoveFilteredOut = function () {
           if(requiresFiltering()) {
             _tracks.forEach(function(track) {
-              if(track.shouldRemove(that._repostRemover, that._playlistRemover)) {
+              if(track.shouldRemove(filterParams())) {
                 track.remove();
               }
             });
@@ -129,7 +136,7 @@
                 if(nextTracks.length > 0) { _searching = false;}
                 nextTracks.each(function (index) {
                   var newTrackItem = new TrackItem( $(this) );
-                  if(!newTrackItem.shouldRemove(that._repostRemover, that._playlistRemover)) {
+                  if(!newTrackItem.shouldRemove(filterParams())) {
                     if(_searching) {_searching = false; _lastPlayed=newTrackItem.getLink(); newTrackItem.play();}
                     _tracks.push(newTrackItem);
                   } else {newTrackItem.remove();}
@@ -233,7 +240,7 @@
     var TrackItem = function (element) {
 
         var _element = element;
-        var _restoreElementCopy, _repost, _removed, _link, _likes, _reposts, that = this;
+        var _restoreElementCopy, _repost, _removed, _link, _likes, _reposts, _plays, that = this;
 
         this.remove = function () {
             if(!_removed) {
@@ -242,19 +249,58 @@
             }
         };
 
-        this.shouldRemove = function(repostRemover, playlistRemover) {
-          var removeAsRepost = repostRemover && this.isRepost();
-          var removeAsPlaylist = playlistRemover && this.isPlaylist();
-          return !this.isRemoved() && (removeAsPlaylist || removeAsRepost);
+        this.shouldRemove = function(filterParams) {
+          if(this.isRemoved()) {return false;}
+          var fp = filterParams;
+          if(fp.repostRemover && this.isRepost()) {return true;} // removeAsRepost
+          if(fp.playlistRemover && this.isPlaylist()) {return true;} //  removeAsPlaylist
+           if(invalidRange('likes', parseInt(fp.likesMin), parseInt(fp.likesMax)) ) {return true;}  // removeDueToLikes
+           if(invalidRange('reposts', parseInt(fp.repostsMin), parseInt(fp.repostsMax)) ) {return true;}  // removeDueToReposts
+           if(invalidRange('plays', parseInt(fp.playsMin), parseInt(fp.playsMax)) ) {return true;}  // removeDueToPlays
+           if(underRatio(parseInt(fp.likesToPlays)) ) {return true;}  // removeAsUnderRatio
         };
+
+        var underRatio = function(thresholdPercentage) {
+          var likes = that.getLikes();
+          var plays = that.getPlays();
+          if(!likes || !plays) {return false;}
+          var actualPercentage = likes / plays * 100;
+          return actualPercentage < thresholdPercentage;
+        }
+
+        var invalidRange = function(type, min, max) {
+          var actual;
+          if(type === 'likes') {actual = that.getLikes()}
+          if(type === 'reposts') {actual = that.getReposts()}
+          if(type === 'plays') {actual = that.getPlays();}
+          var hasMin = min && min > 0;
+          if( !actual || (!hasMin && !max ) ) {return false;}
+          if( (hasMin && min > actual) || (max && max < actual) ) {return true}
+          else {return false;}
+        }
 
         this.isRepost = function() { return _repost; };
         this.getLink = function() { return _link; };
         this.isPlaylist = function() { return this.getLink().indexOf('/sets/') > -1; };
         this.isRemoved = function() { return _removed; };
         this.getElement = function() { return _element; };
-        this.getLikes = function() {return _likes; };
-        this.getReposts = function() {return _reposts; };
+        this.getLikes = function() {return sanitizeNumber(_likes); };
+        this.getReposts = function() {return sanitizeNumber(_reposts); };
+        this.getPlays = function() {return sanitizeNumber(_plays); };
+
+        var sanitizeNumber = function(formattedNumber) {
+          var cleanInt;
+          if(formattedNumber.indexOf('M') > -1) {
+            cleanInt = parseInt(formattedNumber.replace('.', '').replace('M', '')) * 1000000;
+          } else if(formattedNumber.indexOf('K') > -1) {
+            cleanInt = parseInt(formattedNumber.replace('.', '').replace('K', '')) * 1000;
+          } else {
+            return parseInt(formattedNumber.replace(',', ''));
+          }
+          // console.log(formattedNumber, cleanInt);
+          return cleanInt;
+        }
+
         this.play = function() {
           that.getElement().find('.sc-button-play').click();
         };
@@ -264,6 +310,7 @@
             _link = $('a.soundTitle__title', _element).attr('href');
             _likes = $('button.sc-button-like', _element).text();
             _reposts = $('button.sc-button-repost', _element).text();
+            _plays = $('.sound__footerRight .soundStats .sc-ministats-plays span:last-child', _element).text().replace(/,/g, '').trim();
         })();
 
     };
