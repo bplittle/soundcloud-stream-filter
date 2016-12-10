@@ -8,10 +8,7 @@
   <head>
     <title>Soundcloud Filter Settings</title>
     <style>
-      body {
-        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-        font-size: 75%;
-      }
+
     </style>
 
     <!--
@@ -27,16 +24,19 @@
   </head>
   <body>
     <div id="filter-popup-main-container">
+      <img id="logo" src="icon-64.png"/>
       <h4>Soundcloud Stream Filter Settings</h4>
-        <button id="sc-filter-save-settings">Save Settings</button>
-        <button id="sc-filter-clear-settings">Clear Settings</button>
-      <div>Remove Reposts: <button id="sc-filter-repost-remover"><i class="fa fa-retweet"></i></button></div>
-      <div>Track Likes: min<input id="sc-filter-likes-min" type="number" min="0"> max<input id="sc-filter-likes-max" type="number" min="0"></div>
-      <div>Track Plays: min<input id="sc-filter-plays-min" type="number" min="0"> max<input id="sc-filter-plays-max" type="number" min="0"></div>
-      <div>Track Reposts: min<input id="sc-filter-reposts-min" type="number" min="0"> max<input id="sc-filter-reposts-max" type="number" min="0"></div>
-      <div>Likes as % of Plays: <input id="sc-filter-likes-to-plays" type="number" min="0" max="99">%</div>
-      <div>Remove Playlists: <button id="sc-filter-playlist-remover"><i class="fa fa-list"></i></button></div>
-      <!-- <div>Toggle Show Keywords: <button id="sc-filter-keywords-active"><i class="fa fa-font"></i></button></div> -->
+      <button id="sc-filter-save-settings" class="sc-imitation-button" >Save Settings</button>
+      <button id="sc-filter-clear-settings" class="sc-imitation-button" >Clear Settings</button>
+
+      <div><div class="field-name">Remove Reposts: </div><button id="sc-filter-repost-remover" class="toggle-button"><i class="fa fa-retweet"></i></button></div>
+      <div><div class="field-name">Remove Playlists: </div><button id="sc-filter-playlist-remover" class="toggle-button"><i class="fa fa-list"></i></button></div>
+      <div><div class="field-name">Track Likes: </div>min<input id="sc-filter-likes-min" type="number" min="0"> max<input id="sc-filter-likes-max" type="number" min="0"></div>
+      <div><div class="field-name">Track Plays: </div>min<input id="sc-filter-plays-min" type="number" min="0"> max<input id="sc-filter-plays-max" type="number" min="0"></div>
+      <div><div class="field-name">Track Reposts: </div>min<input id="sc-filter-reposts-min" type="number" min="0"> max<input id="sc-filter-reposts-max" type="number" min="0"></div>
+      <div><div class="field-name">Likes as % of Plays: </div><input id="sc-filter-likes-to-plays" type="number" min="0" max="99">%</div>
+      <!-- <div>Enable Keyword Exceptions: <button id="sc-filter-keywords-active" class="toggle-button"><i class="fa fa-font"></i></button></div> -->
+
 
     </div>
   </body>

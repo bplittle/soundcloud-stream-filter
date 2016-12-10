@@ -1,18 +1,71 @@
+body {
+	font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+	font-size: 75%;
+}
+
 #filter-popup-main-container input[type="number"] {
 	display: inline-block;
-	width: 60px;
+	width: 100px;
 }
 #filter-popup-main-container {
 	/* avoid an excessively wide status text */
-	width: 400px;
+	width: 500px;
 	min-height: 100px;
 }
 
-#filter-popup-main-container button.active {color: goldenrod;}
+#filter-popup-main-container button.active {color: #f50;}
 
-#sc-filter-save-settings {float: right;}
-#sc-filter-clear-settings {
-	float: right;
-	margin-top: 25px;
-	margin-right: -88px;
+button {
+	cursor: pointer;
+	border-radius: 3px;
 }
+button:focus {outline:0;}
+input:focus {outline:0;}
+
+.toggle-button {
+	padding: 5px 10px;
+	background: white;
+}
+
+.field-name {width: 150px; display: inline-block;}
+
+#sc-filter-save-settings {
+	position:fixed;
+	top: 10px;
+	right: 10px;
+	width: 120px;
+}
+#sc-filter-clear-settings {
+	position:fixed;
+	top: 45px;
+	right: 10px;
+	width: 120px;
+}
+#logo {
+	position: fixed;
+	bottom: 10px;
+	right: 10px;
+	height: 30px;
+}
+
+.sc-imitation-button {
+	background-color: #f50;
+	border-color: #f50;
+	color: #fff;
+	height: 26px;
+  margin: 0;
+  padding: 2px 11px 2px 10px;
+	font-size: 14px;
+  line-height: 20px;
+	cursor: pointer;
+}
+
+#filter-popup-main-container > div {
+	margin-bottom: 5px;
+}
+
+
+
+input {border-radius: 3px; margin: 0 5px;}
+
+h4 { font-size: 150%; color: #ff5500 }

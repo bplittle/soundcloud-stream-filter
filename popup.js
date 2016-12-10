@@ -1,5 +1,3 @@
-console.log('popup.js loaded');
-
 // initialize state by pulling from memory
 var valuesArray = ['repostRemover', 'likesMin', 'likesMax', 'playsMin', 'playsMax', 'repostsMin', 'repostsMax', 'playlistRemover', 'keywordsActive', 'keywordsArray', 'likesToPlays'];
 
@@ -9,8 +7,6 @@ $(document).ready(function() {
   }
 
   var initializeParameter = function(key, value) {
-    console.log('key', key);
-    console.log('value', value);
     var inputSelector = "#sc-filter-" + camelCaseToDash(key);
 
     // toggles

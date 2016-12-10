@@ -11,6 +11,7 @@
 
     chrome.storage.onChanged.addListener(function(changes, namespace) {
       var keys = Object.keys(changes);
+      console.log(changes);
       for(var i=0;i<keys.length;i++) {
         var key = keys[i];
         var newValue = changes[key].newValue;
@@ -270,12 +271,12 @@
 
         var invalidRange = function(type, min, max) {
           var actual;
+          var hasMin = min && min > 0;
+          if(!hasMin && !max ) {return false;} // no range
           if(type === 'likes') {actual = that.getLikes()}
           if(type === 'reposts') {actual = that.getReposts()}
           if(type === 'plays') {actual = that.getPlays();}
-          var hasMin = min && min > 0;
-          if (actual !== 0 && !actual) {debugger;}
-          if( !actual || (!hasMin && !max ) ) {return false;}
+          if (actual !== 0 && !actual) {return false;}
           if( (hasMin && min > actual) || (max && max < actual) ) {return true}
           else {return false;}
         }
@@ -288,10 +289,14 @@
         this.getLikes = function() {return sanitizeNumber(_likes); };
         this.getReposts = function() {return sanitizeNumber(_reposts); };
         this.getPlays = function() {return sanitizeNumber(_plays); };
+        this.getTitle = function() { return _title; };
+        this.getUsername = function() { return _username; };
+
 
         var sanitizeNumber = function(formattedNumber) {
           if(formattedNumber.indexOf('Repost') > -1) {return 0;}
           if(formattedNumber.indexOf('Like') > -1) {return 0;}
+          // if(formattedNumber === 'Play') {return null;}
 
           var cleanInt;
           if(formattedNumber.indexOf('M') > -1) {
@@ -315,6 +320,8 @@
             _likes = $('button.sc-button-like', _element).text();
             _reposts = $('button.sc-button-repost', _element).text();
             _plays = $('.sound__footerRight .soundStats .sc-ministats-plays span:last-child', _element).text().replace(/,/g, '').trim();
+            _username = $('.soundTitle__usernameText').text();
+            _title = $('a.soundTitle__title span').text();
         })();
 
     };
