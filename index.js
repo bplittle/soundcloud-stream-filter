@@ -240,7 +240,7 @@
     var TrackItem = function (element) {
 
         var _element = element;
-        var _restoreElementCopy, _repost, _removed, _link, _likes, _reposts, _plays, that = this;
+        var _restoreElementCopy, _repost, _removed, _link, _likes, _reposts, _plays, _username, _title, that = this;
 
         this.remove = function () {
             if(!_removed) {
@@ -274,6 +274,7 @@
           if(type === 'reposts') {actual = that.getReposts()}
           if(type === 'plays') {actual = that.getPlays();}
           var hasMin = min && min > 0;
+          if (actual !== 0 && !actual) {debugger;}
           if( !actual || (!hasMin && !max ) ) {return false;}
           if( (hasMin && min > actual) || (max && max < actual) ) {return true}
           else {return false;}
@@ -289,13 +290,16 @@
         this.getPlays = function() {return sanitizeNumber(_plays); };
 
         var sanitizeNumber = function(formattedNumber) {
+          if(formattedNumber.indexOf('Repost') > -1) {return 0;}
+          if(formattedNumber.indexOf('Like') > -1) {return 0;}
+
           var cleanInt;
           if(formattedNumber.indexOf('M') > -1) {
-            cleanInt = parseInt(formattedNumber.replace('.', '').replace('M', '')) * 1000000;
+            cleanInt = parseFloat(formattedNumber.replace('M', '')) * 1000000;
           } else if(formattedNumber.indexOf('K') > -1) {
-            cleanInt = parseInt(formattedNumber.replace('.', '').replace('K', '')) * 1000;
+            cleanInt = parseFloat(formattedNumber.replace('K', '')) * 1000;
           } else {
-            return parseInt(formattedNumber.replace(',', ''));
+            return parseFloat(formattedNumber.replace(',', ''));
           }
           // console.log(formattedNumber, cleanInt);
           return cleanInt;
