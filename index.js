@@ -90,7 +90,7 @@
         var canPlay = function (tracklink) {
           var track = _tracks.find(function (track) {
               // return post.getLink() === tracklink || endsWith(tracklink, 'in=' + post.getLink().substring(1));
-              return track.getLink() === tracklink;
+              return track.getLink() === tracklink || (!that._playlistRemover && track.isPlaylist());
           });
           return track && !track.isRemoved();
         };
@@ -139,7 +139,7 @@
         };
         chrome.storage.sync.get(valuesArray, function(storage) {
           var keys = Object.keys(storage);
-          // console.log(storage);
+          console.log(storage);
           for(var i=0;i<keys.length;i++) {
             var key = keys[i];
             var value = storage[key];
