@@ -31,7 +31,7 @@ $(document).ready(function() {
   }
 
   // initialize ux pulling data from storage
-  chrome.storage.sync.get(valuesArray, function(storage, namespace) {
+  chrome.storage.sync.get(valuesArray, function(storage) {
     console.log('storage', storage);
     for (key in storage) {
       var value = storage[key];

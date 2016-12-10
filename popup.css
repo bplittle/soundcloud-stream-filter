@@ -1,0 +1,13 @@
+#filter-popup-main-container input[type="number"] {
+	display: inline-block;
+	width: 30px;
+}
+#filter-popup-main-container {
+	/* avoid an excessively wide status text */
+	width: 300px;
+	min-height: 100px;
+}
+
+#filter-popup-main-container button.active {color: goldenrod;}
+
+#sc-filter-save-settings {float: right;}
