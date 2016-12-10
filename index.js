@@ -5,6 +5,16 @@
     var _toggleRepostsButton = $('<button class="sc-button-repost sc-button sc-button-large sc-button-responsive"></button>');
     // var _toggleRepostsExceptions = $('<div id="toggle-reposts-exceptions">')
 
+    chrome.storage.onChanged.addListener(function(changes, namespace) {
+      var keys = Object.keys(changes);
+      for(var i=0;i<keys.length;i++) {
+        var key = keys[i];
+        if(key === 'repostRemover') {
+          if(_trackList) { _trackList.toggleReposts(); }
+        }
+      }
+    });
+
     var TrackList = function (element) {
 
         var _element = element;
@@ -72,6 +82,17 @@
             } else {
                 console.log('reveal reposts');
                 revealReposts();
+            }
+        };
+
+        this.togglePlaylists = function () {
+            _removePlaylists = !_removePlaylists;
+            if (_removePlaylists) {
+                console.log('remove playlists');
+                removePlaylists();
+            } else {
+                console.log('reveal playlists');
+                revealPlaylists();
             }
         };
 
@@ -191,7 +212,7 @@
 
         var _element = element;
         var _position = position;
-        var _restoreElementCopy, _repost, _removed, _link;
+        var _restoreElementCopy, _repost, _removed, _link, _playlist, _likes, _reposts;
 
         this.remove = function () {
             if(!_removed) {
@@ -209,18 +230,16 @@
             }
         };
 
-        this.isRepost = function(){
-            return _repost;
-        };
+        this.isRepost = function() { return _repost; };
 
-        this.getLink = function(){
-            return _link;
-        };
-
+        this.getLink = function() { return _link; };
 
         (function init() {
             _repost = $('.soundContext .sc-ministats-reposts', _element).length > 0;
             _link = $('a.soundTitle__title', _element).attr('href');
+            _playlist = $('div.group').hasClass('playlist');
+            _likes = $('button.sc-button-like').text();
+            _reposts = $('button.sc-button-respost').text();
         })();
 
     };
