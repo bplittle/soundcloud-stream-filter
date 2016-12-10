@@ -16,7 +16,7 @@
             _toggleRepostsButton.addClass('sc-button-selected');
             internalRemoveReposts();
             _trackPagingListener.startListening();
-            chrome.storage.sync.set({'state': 'active'});
+            // chrome.storage.sync.set({'repostRemover': true});
             _player.onTrackChanged(function (tracklink) {
                 if(!isRepost(tracklink)) {
                     _player.next();
@@ -59,9 +59,9 @@
                 repost.revealOnList(_that);
             });*/
             _trackPagingListener.stopListening();
-            chrome.storage.sync.set({'state': 'inactive'}, function(){
+            // chrome.storage.sync.set({'repostRemover': false}, function(){
                 location.href = '/stream';
-            });
+            // });
         };
 
         this.toggleReposts = function () {
@@ -97,8 +97,8 @@
                 });
                 internalRemoveReposts();
             });
-            chrome.storage.sync.get('state', function(result) {
-                if(result.state === 'active') {
+            chrome.storage.sync.get('repostRemover', function(result) {
+                if(result.repostRemover) {
                     removeReposts();
                     _removeReposts = true;
                 }
@@ -226,17 +226,16 @@
     };
 
     var appendToggleButton = function () {
-        debugger;
-        $('#filter-popup-main-container').append(_toggleRepostsButton);
-        // $('.l-tabs ul.g-tabs').append(_toggleRepostsButton);
+        // $('#filter-popup-main-container').append(_toggleRepostsButton);
+        $('.l-tabs ul.g-tabs').append(_toggleRepostsButton);
         _toggleRepostsButton.wrap('<li class="g-tabs-item repost-toggle-item"></li>');
 
         _toggleRepostsButton.unbind();
-        _toggleRepostsButton.click(function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            _trackList.toggleReposts();
-        });
+        // _toggleRepostsButton.click(function (e) {
+        //     e.preventDefault();
+        //     e.stopPropagation();
+        //     _trackList.toggleReposts();
+        // });
     };
 
     var initTracklist = function (callback) {

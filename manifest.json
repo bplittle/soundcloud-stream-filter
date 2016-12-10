@@ -4,15 +4,15 @@
       "js": [ "jquery-2.1.4.min.js", "index.js" ],
       "matches": [ "https://soundcloud.com/*" ]
    } ],
-   "description": "This extension allows you to toggle reposts in stream",
+   "description": "Soundcloud stream filter with advanced parameters",
    "manifest_version": 2,
-   "name": "Tweaked Repost-Toggle for Soundcloud",
+   "name": "Soundcloud Stream Filter",
    "permissions": [ "activeTab", "https://soundcloud.com/*", "storage" ],
-   "short_name": "repost-toggle",
+   "short_name": "sc-filter",
    "version": "1.0",
    "browser_action": {
       "default_popup": "popup.html",
-      "default_title": "Soundcloud filter settings",
+      "default_title": "Soundcloud Filter Settings",
       "default_icon": "icon.png"
     }
 }
