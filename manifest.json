@@ -4,7 +4,7 @@
       "js": [ "jquery-2.1.4.min.js", "index.js" ],
       "matches": [ "https://soundcloud.com/*" ]
    } ],
-   "description": "Soundcloud stream filter with advanced parameters. Filter out playlists and/or reposts. Filter by the number of plays, likes, or reposts, or even a ratio thereof.",
+   "description": "Soundcloud stream filter with advanced parameters (reposts, playlists, likes, etc)",
    "manifest_version": 2,
    "name": "Soundcloud Stream Filter",
    "permissions": [ "activeTab", "https://soundcloud.com/*", "storage" ],
@@ -18,8 +18,5 @@
     "icons": {
       "128": "icon_128.png",
       "16": "icon_16.png"
-   },
-   "container": ["DOMAIN_INSTALLABLE"],
-   "default_locale": "en",
-   "api_console_project_id": "428464274542",
+   }
 }
