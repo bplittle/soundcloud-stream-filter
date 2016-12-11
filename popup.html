@@ -24,7 +24,8 @@
   </head>
   <body>
     <div id="filter-popup-main-container">
-      <img id="logo" src="icon-64.png"/>
+      <button class="sc-imitation-button inactive" id="enabled-state"></button>
+      <img id="logo" class="inactive" src="icon.png"/>
       <h4>Soundcloud Stream Filter Settings</h4>
       <button id="sc-filter-save-settings" class="sc-imitation-button" >Save Settings</button>
       <button id="sc-filter-clear-settings" class="sc-imitation-button" >Clear Settings</button>
@@ -35,9 +36,18 @@
       <div><div class="field-name">Track Plays: </div>min<input id="sc-filter-plays-min" type="number" min="0"> max<input id="sc-filter-plays-max" type="number" min="0"></div>
       <div><div class="field-name">Track Reposts: </div>min<input id="sc-filter-reposts-min" type="number" min="0"> max<input id="sc-filter-reposts-max" type="number" min="0"></div>
       <div><div class="field-name">Likes as % of Plays: </div><input id="sc-filter-likes-to-plays" type="number" min="0" max="99">%</div>
-      <!-- <div>Enable Keyword Exceptions: <button id="sc-filter-keywords-active" class="toggle-button"><i class="fa fa-font"></i></button></div> -->
+      <div class="disabled"><div class="field-name">Exception Keywords: </div><button id="sc-filter-keywords-active" class="toggle-button"><i class="fa fa-font"></i></button> Coming Soon!</div>
 
-
+      <div id="more-info">
+        <div id="more-info-header"><span class="underline">Info:</span> <i class="fa fa-chevron-down"></i></div>
+        <ul>
+          <li>You must save changes for them to take effect.</li>
+          <!-- <li>Likes as % of Plays: Likes / Plays * 100</li> -->
+          <li>Exception keywords will allow you to provide exceptions from your filters based on a case-insensitive word found in the username or title.</li>
+          <li>Created by <a href="http://www.brendan-little.ca" target="_blank">Brendan Little</a></li>
+          <li>Inspired by the awesome <a href="https://chrome.google.com/webstore/detail/repost-toggle-for-soundcl/amimeafgcnfidkeknebnfdblmmekifem" target="_blank">Soundcloud Repost Toggle</a></li>
+        </ul>
+      </div>
     </div>
   </body>
 </html>

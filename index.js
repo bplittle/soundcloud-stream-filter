@@ -2,14 +2,15 @@
     'use strict';
 
     // var valuesArray = ['repostRemover', 'likesin', 'likesMax', 'playsMin', 'playsMax', 'playlistRemover', 'keywordsActive', 'keywordsArray'];
-    var valuesArray = ['repostRemover', 'playlistRemover', 'likesMin', 'likesMax', 'playsMin', 'playsMax', 'repostsMin', 'repostsMax', 'likesToPlays'];
+    var valuesArray = ['enabled', 'repostRemover', 'playlistRemover', 'likesMin', 'likesMax', 'playsMin', 'playsMax', 'repostsMin', 'repostsMax', 'likesToPlays'];
 
 
     var _trackList, _player;
-    var _toggleRepostsButton = $('<button class="sc-button-repost sc-button sc-button-large sc-button-responsive"></button>');
+    var _toggleFilterButton = $('<div id="sc-filter-logo-div" class="inactive"></div>');
     // var _toggleRepostsExceptions = $('<div id="toggle-reposts-exceptions">')
 
     chrome.storage.onChanged.addListener(function(changes, namespace) {
+      if(changes.enabled) { refreshIfStream(); }
       var keys = Object.keys(changes);
       console.log(changes);
       for(var i=0;i<keys.length;i++) {
@@ -17,12 +18,14 @@
         var newValue = changes[key].newValue;
         if(key === 'repostRemover' || key === 'playlistRemover') {
           if(!newValue) {
-            refreshIfStream();
+            if(_trackList._enabled) {refreshIfStream()};
           } else {
             _trackList["_" + key] = newValue;
           }
         } else if (key.indexOf('Min') > -1 || key.indexOf('Max') > -1 || key.indexOf('likes') > -1) {
-          refreshIfStream();
+          if(_trackList._enabled) {refreshIfStream(); }
+        } else {
+          _trackList["_" + key] = newValue;
         }
         if(i == keys.length - 1 ) {_trackList.internalRemoveFilteredOut();}
       }
@@ -48,7 +51,7 @@
         }
 
         // var repostRemover = function () {
-        //     // _toggleRepostsButton.addClass('sc-button-selected');
+        //     // _toggleFilterButton.addClass('sc-button-selected');
         //     this.internalRemoveFilteredOut();
         //     _trackPagingListener.startListening();
         //     // chrome.storage.sync.set({'repostRemover': true});
@@ -126,6 +129,7 @@
         };
 
         this.init = function() {
+          if(that._enabled) {
             $('li.soundList__item', _element).each( function() {
                 _tracks.push( new TrackItem( $(this) ) );
             });
@@ -144,9 +148,11 @@
                 });
                 // that.internalRemoveFilteredOut();
             });
+          }
         };
         chrome.storage.sync.get(valuesArray, function(storage) {
           var keys = Object.keys(storage);
+          if(storage.enabled) {$('#sc-filter-logo-div').removeClass('inactive');}
           console.log(storage);
           for(var i=0;i<keys.length;i++) {
             var key = keys[i];
@@ -253,6 +259,7 @@
         this.shouldRemove = function(filterParams) {
           if(this.isRemoved()) {return false;}
           var fp = filterParams;
+          if(!fp.enabled) {return false;}
           if(fp.repostRemover && this.isRepost()) {return true;} // removeAsRepost
           if(fp.playlistRemover && this.isPlaylist()) {return true;} //  removeAsPlaylist
            if(invalidRange('likes', parseInt(fp.likesMin), parseInt(fp.likesMax)) ) {return true;}  // removeDueToLikes
@@ -326,13 +333,20 @@
 
     };
 
-    // var appendToggleButton = function () {
-    //     // $('#filter-popup-main-container').append(_toggleRepostsButton);
-    //     $('.l-tabs ul.g-tabs').append(_toggleRepostsButton);
-    //     _toggleRepostsButton.wrap('<li class="g-tabs-item repost-toggle-item"></li>');
-    //
-    //     _toggleRepostsButton.unbind();
-    // };
+    var appendToggleButton = function () {
+        $('.l-tabs ul.g-tabs').append(_toggleFilterButton);
+        _toggleFilterButton.wrap('<li class="g-tabs-item repost-toggle-item"></li>');
+
+        _toggleFilterButton.unbind();
+        if(!_trackList._enabled) {_toggleFilterButton.addClass('inactive');}
+        _toggleFilterButton.click(function() {
+          chrome.storage.sync.set({enabled: !_trackList._enabled}, function(storage) {
+            _trackList._enabled = !_enabled;
+            _toggleFilterButton.toggleClass('active');
+            _toggleFilterButton.toggleClass('inactive');
+          });
+        })
+    };
 
     var initTracklist = function (callback) {
         var waitTracksLoadedInterval = setInterval(function () {
@@ -349,7 +363,7 @@
 
     var init = function(){
         initTracklist(function () {
-            // appendToggleButton();
+            appendToggleButton();
             _player = new Player($('.playControls'));
         });
     };

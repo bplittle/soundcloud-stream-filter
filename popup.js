@@ -1,28 +1,36 @@
 // initialize state by pulling from memory
-var valuesArray = ['repostRemover', 'likesMin', 'likesMax', 'playsMin', 'playsMax', 'repostsMin', 'repostsMax', 'playlistRemover', 'keywordsActive', 'keywordsArray', 'likesToPlays'];
-
+var valuesArray = ['enabled', 'repostRemover', 'likesMin', 'likesMax', 'playsMin', 'playsMax', 'repostsMin', 'repostsMax', 'playlistRemover', 'keywordsActive', 'keywordsArray', 'likesToPlays'];
+var _enabled;
 $(document).ready(function() {
   function camelCaseToDash( myStr ) {
     return myStr.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase();
   }
 
   var initializeParameter = function(key, value) {
-    var inputSelector = "#sc-filter-" + camelCaseToDash(key);
-
-    // toggles
-    if(key.indexOf('Remover') > -1 || key.indexOf('Active') > -1) {
-      // initialize click selectors for buttons
-      $(inputSelector).click(function() {
-        $(this).toggleClass('active');
-        console.log($(this));
-      });
-      if(value) {$(inputSelector).addClass('active');}
-    }
-
-    // inputs
-    if( (key.indexOf('Max') > -1 || key.indexOf('Min') > -1 || key.indexOf('likes') > -1) && value) {
+    if(key === 'enabled') {
+      if(value) {
+        _enabled = value;
+        $('#enabled-state, #logo').toggleClass('active');
+        $('#enabled-state, #logo').toggleClass('inactive');
+      }
+    } else {
       var inputSelector = "#sc-filter-" + camelCaseToDash(key);
-      $(inputSelector).val(value);
+
+      // toggles
+      if(key.indexOf('Remover') > -1 || key.indexOf('Active') > -1) {
+        // initialize click selectors for buttons
+        $(inputSelector).click(function() {
+          $(this).toggleClass('active');
+          console.log($(this));
+        });
+        if(value) {$(inputSelector).addClass('active');}
+      }
+
+      // inputs
+      if( (key.indexOf('Max') > -1 || key.indexOf('Min') > -1 || key.indexOf('likes') > -1) && value) {
+        var inputSelector = "#sc-filter-" + camelCaseToDash(key);
+        $(inputSelector).val(value);
+      }
     }
   }
 
@@ -66,4 +74,18 @@ $(document).ready(function() {
       $(inputSelector).val('');
     }
   });
+
+  $('#enabled-state').click(function() {
+    chrome.storage.sync.set({enabled: !_enabled}, function(storage) {
+      _enabled = !_enabled;
+      $('#enabled-state, #logo').toggleClass('active');
+      $('#enabled-state, #logo').toggleClass('inactive');
+    });
+  })
+
+  $('#more-info-header').click(function() {
+    $('#more-info').toggleClass('open');
+    $(this).find('i').toggleClass('fa-chevron-down');
+    $(this).find('i').toggleClass('fa-chevron-up');
+  })
 });
