@@ -91,7 +91,7 @@
         };
 
         var requiresFiltering = function() {
-          return that._repostRemover || that._playlistRemover;
+          return that._enabled;
         };
 
         var endsWith = function (str, suffix) {
@@ -271,7 +271,7 @@
         var underRatio = function(thresholdPercentage) {
           var likes = that.getLikes();
           var plays = that.getPlays();
-          if(!likes || !plays) {return false;}
+          if(!likes || !plays) {console.log('no likes or no plays'); return false;}
           var actualPercentage = likes / plays * 100;
           return actualPercentage < thresholdPercentage;
         }

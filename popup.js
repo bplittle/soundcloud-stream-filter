@@ -21,7 +21,6 @@ $(document).ready(function() {
         // initialize click selectors for buttons
         $(inputSelector).click(function() {
           $(this).toggleClass('active');
-          console.log($(this));
         });
         if(value) {$(inputSelector).addClass('active');}
       }
@@ -53,7 +52,6 @@ $(document).ready(function() {
         var value = $(inputSelector).hasClass('active');
         newValues[key] = value;
       } else if(key.indexOf('Max') > -1 || key.indexOf('Min') > -1 || key.indexOf('likes') > -1){
-        debugger;
         var value = $(inputSelector).val();
         newValues[key] = value;
       }
