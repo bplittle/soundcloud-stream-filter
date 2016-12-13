@@ -7,9 +7,9 @@
    "description": "Soundcloud stream filter with advanced parameters (reposts, playlists, likes, etc)",
    "manifest_version": 2,
    "name": "Soundcloud Stream Filter",
-   "permissions": [ "activeTab", "https://soundcloud.com/*", "storage" ],
+   "permissions": [ "activeTab", "webRequest", "https://soundcloud.com/*", "storage" ],
    "short_name": "sc-filter",
-   "version": "0.0.0.2",
+   "version": "0.0.0.3",
    "browser_action": {
       "default_popup": "popup.html",
       "default_title": "Soundcloud Filter Settings",

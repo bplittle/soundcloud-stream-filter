@@ -1,6 +1,23 @@
 // initialize state by pulling from memory
 var valuesArray = ['enabled', 'repostRemover', 'likesMin', 'likesMax', 'playsMin', 'playsMax', 'repostsMin', 'repostsMax', 'playlistRemover', 'keywordsActive', 'keywordsArray', 'likesToPlays'];
 var _enabled;
+
+console.log(chrome.permissions);
+chrome.permissions.request({
+  permissions: ['webRequest']
+}, function(granted) {
+  // The callback argument will be true if the user granted the permissions.
+  if (granted) {
+    chrome.webRequest.onCompleted.addListener(function(details) {
+      debugger;
+    }, {urls: ["*.com/stream*"]})
+
+  } else {
+    // doSomethingElse();
+    console.log('not granted');
+  }
+});
+
 $(document).ready(function() {
   function camelCaseToDash( myStr ) {
     return myStr.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase();
@@ -62,6 +79,7 @@ $(document).ready(function() {
         });
       }
     }
+
   });
 
   $('#sc-filter-clear-settings').click(function() {
@@ -86,4 +104,10 @@ $(document).ready(function() {
     $(this).find('i').toggleClass('fa-chevron-down');
     $(this).find('i').toggleClass('fa-chevron-up');
   })
+
+  var timeDiffInDays = function(time1, time2) {
+    if(time1 && time2) {
+      return (new Date(time1) - new Date(time2) ) / 1000 / 60 / 60 / 24;
+    } else {return false;}
+  }
 });
