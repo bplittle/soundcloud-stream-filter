@@ -2,7 +2,6 @@
 
 (function () {
     'use strict';
-    
     // var valuesArray = ['repostRemover', 'likesin', 'likesMax', 'playsMin', 'playsMax', 'playlistRemover', 'keywordsActive', 'keywordsArray'];
     var valuesArray = ['enabled', 'repostRemover', 'playlistRemover', 'likesMin', 'likesMax', 'playsMin', 'playsMax', 'repostsMin', 'repostsMax', 'likesToPlays'];
 

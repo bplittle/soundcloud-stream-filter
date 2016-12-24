@@ -2,26 +2,26 @@
 var valuesArray = ['enabled', 'repostRemover', 'likesMin', 'likesMax', 'playsMin', 'playsMax', 'repostsMin', 'repostsMax', 'playlistRemover', 'keywordsActive', 'keywordsArray', 'likesToPlays'];
 var _enabled;
 
-console.log(chrome.permissions);
-chrome.permissions.request({
-  permissions: ['webRequest']
-}, function(granted) {
-  // The callback argument will be true if the user granted the permissions.
-  if (granted) {
-    chrome.webRequest.onCompleted.addListener(function(details) {
-      debugger;
-    }, {urls: ["*.com/stream*"]})
-
-  } else {
-    // doSomethingElse();
-    console.log('not granted');
-  }
-});
-
 $(document).ready(function() {
   function camelCaseToDash( myStr ) {
     return myStr.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase();
   }
+  // console.log(chrome.permissions);
+  // chrome.permissions.request({
+  //   permissions: ['webRequest'],
+  //   origins: ['http://soundcloud.com*']
+  // }, function(granted) {
+  //   // The callback argument will be true if the user granted the permissions.
+  //   if (granted) {
+  //     chrome.webRequest.onCompleted.addListener(function(details) {
+  //       debugger;
+  //     }, {urls: ["*.com/stream*"]})
+  //
+  //   } else {
+  //     // doSomethingElse();
+  //     console.log('not granted');
+  //   }
+  // });
 
   var initializeParameter = function(key, value) {
     if(key === 'enabled') {
